@@ -152,13 +152,18 @@ div#block_113364.site__block--background, div#block_118571.site__block--backgrou
 	margin-left: 8px;
 }
 
-.room-model-2__desc .style__button {
-    font-size: 17px!important;
+.room-model-2__desc .style__button, .room-model-2__amenities  .style__button {
+	font-size: 17px!important;
     line-height: 17px!important;
     font-family: "Montserrat SemiBold"!important;
     background-color: #b58c7d!important;
     border-color: #b58c7d!important;
     border-radius: 7px!important;
+}
+
+.room-model-2__desc .style__button:hover, .room-model-2__amenities  .style__button:hover {
+    background-color: #ffffff!important;
+    color: #b58c7d!important;
 }
 
 /* --- calendrier dispo--- */
