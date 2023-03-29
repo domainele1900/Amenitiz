@@ -73,6 +73,13 @@ border-bottom: solid 1px #eeeeee;
 	background-color: #b58c7d!important;
 }
 
+/* "Houston" image with columns width fix */
+@media screen and (min-width: 768px) {
+  .text-columns__items.columns-with-image-model-1 .text-columns__item:first-child:nth-last-child(4), .text-columns__items.columns-with-image-model-1 .text-columns__item:first-child:nth-last-child(4)~.text-columns__item {
+      width: calc(25% - 48px);
+  }
+}
+
 /* --- Home specific --- */
 
 @media screen and (max-width: 768px) {
