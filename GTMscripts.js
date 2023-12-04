@@ -18,7 +18,7 @@ bookingRoomDataLayer = function() {
                              $('input#room_booked_total_adult', $(elt)).attr('value')+' adultes-'+$('input#room_booked_total_children', $(elt)).attr('value')+' enfants'; 
         item.price = $('input#room_booked_total_price', $(elt)).attr('value'); 
         item.promotion_id = $('input#room_booked_pricing_type_id', $(elt)).attr('value'); 
-        items[] = item;
+        items[i] = item;
         console.log(item); 
     });
 
