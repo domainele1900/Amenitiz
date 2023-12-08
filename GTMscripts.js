@@ -49,7 +49,7 @@ informationsDataLayer = function(evtName) {
         item.item_category = dates+'/'+
                             $('select[name="cart_item[total_adult]"]', $(elt)).val()+' adultes-'+
                             $('select[name="cart_item[total_children]"]', $(elt)).val()+' enfants'; 
-        item.price = $('.informations__room-info').text().match(/\d+ €/)[0];
+        item.price = $('.informations__room-info', $(elt)).text().match(/\d+ €/)[0];
         items[i] = item;
     });
 
@@ -149,5 +149,30 @@ $( document ).ready(function() {
             
             window.dataLayer.push(vars);
         }
+    });
+
+    // remove from cart click init dataLayer
+    $('a[href*="booking/remove-from-cart"').on('click', function(e) {
+        e.preventDefault();
+        var elt = $(e.target).parents('.informations__room-info');
+    
+        var item= {
+            item_name: $('.informations__room-name h3', elt).text(),
+            item_category: $('.informations__header h3').text().replace(/\s+/g, ' ')+'/'+
+                            $('select[name="cart_item[total_adult]"]', elt).val()+' adultes-'+
+                            $('select[name="cart_item[total_children]"]', elt).val()+' enfants',
+            price: $('.informations__room-info').text().match(/\d+ €/)[0]
+        }; 
+
+        window.dataLayer.push({ ecommerce: null });
+        window.dataLayer.push({
+            event: 'remove_from_cart',
+            ecommerce: {
+                currency: "EUR",
+                value: $('#total-price-booking-engine').text(),
+                items: [item]
+            }
+        });
+    
     });
 });
