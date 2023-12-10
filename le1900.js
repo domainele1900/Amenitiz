@@ -54,7 +54,7 @@ $( document ).ready(function() {
 		// get month in title above table
 		var m = $('h2', $(this).parents('.pricing_table_wrapper').parent()).text();
 
-		var dt = new Date(dt+' '+m);
+		var dt = new Date(d+' '+m);
 		// get language
 		var m = window.location.pathname.match(/\/[a-z]{2}\//);
 

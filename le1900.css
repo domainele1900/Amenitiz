@@ -334,3 +334,6 @@ td.fc-widget-content {
     text-align: center!important;
     padding: 0 !important;
 }
+.pricing_table_block td.highlight {
+    background-color: #F0E8E5 !important;
+}
