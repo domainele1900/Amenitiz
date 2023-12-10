@@ -326,7 +326,7 @@ td.fc-widget-content {
 
 /* --- Tableau "table tarifs" --- */
 .pricing_table_block td {
-    background-color: #ddd !important;
+    border-color: #ddd !important;
     padding: 8px !important;
     cursor: pointer;
 }
