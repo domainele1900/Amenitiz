@@ -50,11 +50,19 @@ $( document ).ready(function() {
 			return;
 		}
 		// get day in 1st col
-		var d = $('td[row-coordinate="'+Math.max($(this).attr('row-coordinate'), 3)+'"][column-coordinate="1"]', $(this).parents('table')).text();
+		var d = $('td[row-coordinate="'+Math.max($(this).attr('row-coordinate'), 3)+'"][column-coordinate="1"]', $(this).parents('table')).text()
+			+' '+
 		// get month in title above table
-		var m = $('h2', $(this).parents('.pricing_table_wrapper').parent()).text();
+			$('h2', $(this).parents('.pricing_table_wrapper').parent()).text();
+		
+		// change Month to MM in string
+		var ms = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+		d = d.replace(/([a-zA-Zéû]+)/g, function(m) { var i=ms.indexOf(m); return i==-1? '' : (i<9 ? '0' : '' ) + (ms.indexOf(m) + 1); });
+		// change date format to yyyy/mm/dd
+		d = d.replace(/([a-zA-Z\s]+)(\d{1,2})\s+(\d{2})\s+(\d{4})\s+/, '$4/$3/$2')
 
-		var dt = new Date(d+' '+m);
+		var dt = new Date(d);
+		
 		// get language
 		var m = window.location.pathname.match(/\/[a-z]{2}\//);
 
