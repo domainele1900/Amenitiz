@@ -323,3 +323,14 @@ td.fc-widget-content {
 .text-columns__items.columns-with-image-model-1 .text-columns__item .sub-block__image img {
 	width:auto;
 }
+
+/* --- Tableau "table tarifs" --- */
+.pricing_table_block td {
+    background-color: #ddd !important;
+    padding: 8px !important;
+    cursor: pointer;
+}
+.pricing_table_block td div.style__text {
+    text-align: center!important;
+    padding: 0 !important;
+}
