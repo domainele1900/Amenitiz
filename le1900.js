@@ -56,8 +56,9 @@ $( document ).ready(function() {
 			$('h2', $(this).parents('.pricing_table_wrapper').parent()).text();
 		
 		// change Month to MM in string
-		var ms = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-		d = d.replace(/([a-zA-Zéû]+)/g, function(m) { var i=ms.indexOf(m); return i==-1? '' : (i<9 ? '0' : '' ) + (ms.indexOf(m) + 1); });
+		var ms = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+				'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		d = d.replace(/([a-zA-Zéû]+)/g, function(m) { var i=ms.indexOf(m) % 12 + 1; return i==0? '' : (i<10 ? '0' : '' ) + i; });
 		// change date format to yyyy/mm/dd
 		d = d.replace(/([a-zA-Z\s]+)(\d{1,2})\s+(\d{2})\s+(\d{4})\s+/, '$4/$3/$2')
 
