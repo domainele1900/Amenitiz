@@ -176,3 +176,83 @@ $( document ).ready(function() {
     
     });
 });
+
+
+/**
+ * no availability handling: propose other date
+ */
+checkNearDates = function () {
+    if ($('.be__no-room-available').length) {
+        var search = new URLSearchParams(window.location.search);
+        var arr = new Date(search.get('info[arrival_date]').replace(/(\d{2})\/(\d{2})\/(\d{4})/g, '$3/$2/$1'));
+        var dep = new Date(search.get('info[departure_date]').replace(/(\d{2})\/(\d{2})\/(\d{4})/g, '$3/$2/$1'));
+        var today = new Date();
+        
+        $('.be__no-room-available').prepend('<div class="row" id="near_avail" style="margin: 1.5em 0"></div>');
+        $('#near_avail').append(
+            $('<h4></h4>')
+            .text(( window.location.pathname.includes('/fr/') 
+                ? 
+                'Autres disponibilités à cette période pour '+ search.get('info[total_adult]') +' adultes '+
+                  (search.get('info[total_children]')>0 ? search.get('info[total_children]') +' enfants' : '')
+                :
+                'Other availabilities at this period for '+ search.get('info[total_adult]') +' adults '+
+                    (search.get('info[total_children]')>0 ? search.get('info[total_children]') +' children' : '')
+               ) + ':')
+        );
+        
+        for (let i = 1; i < 3; i++) {
+            arr.setDate(arr.getDate()+1);
+            if (arr < dep) {
+                checkAddNearAvail(search, arr, dep);
+            }
+            
+            dep.setDate(dep.getDate()+1);
+            checkAddNearAvail(search, arr, dep);
+        }
+        arr.setDate(arr.getDate()-2); 
+        dep.setDate(dep.getDate()-2); 
+        for (i = 1; i < 3; i++) {
+            dep.setDate(dep.getDate()-1);
+            if (arr < dep && arr > today) {
+                checkAddNearAvail(search, arr, dep);
+            }
+            arr.setDate(arr.getDate()-1);
+            if (arr < dep && arr > today) {
+                checkAddNearAvail(search, arr, dep);
+            }
+        }
+    }
+}
+
+checkAddNearAvail = function(search, arr, dep) {
+    let s = ( window.location.pathname.includes('/fr/')
+            ? 'Du ' + arr.toLocaleDateString(navigator.language, { dateStyle: "medium" }) + ' au ' 
+                + dep.toLocaleDateString(navigator.language, { dateStyle: "medium" })
+            : 'From ' + arr.toLocaleDateString(navigator.language, { dateStyle: "medium" }) + ' to ' 
+                + dep.toLocaleDateString(navigator.language, { dateStyle: "medium" })
+    );
+    
+    search.set('info[arrival_date]', arr.toLocaleDateString('fr'));
+    search.set('info[departure_date]', dep.toLocaleDateString('fr'));
+    let url = window.location.origin + window.location.pathname + '?' + search.toString();
+    $.ajax({
+        url: window.location.origin + window.location.pathname + '?' + search.toString(),
+        beforeSend: function(xhr) {
+             //xhr.setRequestHeader("Authorization", "Bearer 6QXNMEMFHNY4FJ5ELNFMP5KRW52WFXN5")
+        }, success: function(data){
+            // console.log(data.includes('id="no_rooms_available"'));
+            $('#near_avail').append(
+                $('<div></div>').addClass('col-xs-6 col-md-4')
+                    .append(
+                        ( data.includes('class="be__no-room-available"')
+                        ?
+                        $('<span style="text-decoration: line-through"></span').text(s)
+                        :
+                        $('<a href="' +url+ '"></a>').text(s)
+                        )
+                        )
+            );
+        }
+    });
+}
