@@ -183,11 +183,27 @@ $( document ).ready(function() {
  */
 checkNearDates = function () {
     if ($('.be__no-room-available').length) {
+        // get arrival and departure dates from query string
         var search = new URLSearchParams(window.location.search);
-        var arr = new Date(search.get('info[arrival_date]').replace(/(\d{2})\/(\d{2})\/(\d{4})/g, '$3/$2/$1'));
-        var dep = new Date(search.get('info[departure_date]').replace(/(\d{2})\/(\d{2})\/(\d{4})/g, '$3/$2/$1'));
-        var today = new Date();
-        
+        var req_arr = search.get('info[arrival_date]');
+        var req_dep = search.get('info[departure_date]');
+        var arr = search.get('info[arrival_date]') ? new Date(req_arr.replace(/(\d{2})\/(\d{2})\/(\d{4})/g, '$3/$2/$1')) : null;
+        var dep = search.get('info[departure_date]') ? new Date(req_dep.replace(/(\d{2})\/(\d{2})\/(\d{4})/g, '$3/$2/$1')) : null;
+        // if no departure, set it to arrival +2 days
+        if (!dep) {
+            dep = arr; 
+            if (arr) {
+                dep.setDate(arr.getDate()+2)
+            }
+        }
+        // if no dates, get out
+        if (!arr ||!dep) {
+            return;
+        }
+        var today = new Date(); today.setTime(0,0,0,0);
+        var nb_days = (dep-arr) / (1000*60*60*24);
+
+        // add html elements to the not available rooms div
         $('.be__no-room-available').prepend('<div class="row" id="near_avail" style="margin: 1.5em 0"></div>');
         $('#near_avail').append(
             $('<h4></h4>')
@@ -200,32 +216,36 @@ checkNearDates = function () {
                     (search.get('info[total_children]')>0 ? search.get('info[total_children]') +' children' : '')
                ) + ':')
         );
+        // add spinner div
+        $('#near_avail').append('<div class="col-sm-6 col-md-4" id="near_avail_spinner"><i class="fas fa-spinner fa-spin "></i></div>');
+
+        // get starting dates: either from tomorrow on or -2 days of original request
+        if (Math.round((arr-today)/(1000*60*60*24),0) > 2) {
+            arr.setDate(arr.getDate()-2); 
+            dep.setDate(dep.getDate()-2); 
+        } else {
+            arr = today; arr.setDate(arr.getDate()+1);
+            dep = arr; dep.setDate(arr.getDate() + nb_days);
+        }
         
-        for (let i = 1; i < 3; i++) {
+        // Loop on 5 days
+        for (let i = 1; i < 6; i++) {
+            if(arr.toLocaleDateString('fr')!=req_arr || dep.toLocaleDateString('fr')!=req_dep) {
+                checkAddNearAvail(search, arr, dep);
+            }
+
             arr.setDate(arr.getDate()+1);
             if (arr < dep) {
                 checkAddNearAvail(search, arr, dep);
             }
             
             dep.setDate(dep.getDate()+1);
-            checkAddNearAvail(search, arr, dep);
-        }
-        arr.setDate(arr.getDate()-2); 
-        dep.setDate(dep.getDate()-2); 
-        for (i = 1; i < 3; i++) {
-            dep.setDate(dep.getDate()-1);
-            if (arr < dep && arr > today) {
-                checkAddNearAvail(search, arr, dep);
-            }
-            arr.setDate(arr.getDate()-1);
-            if (arr < dep && arr > today) {
-                checkAddNearAvail(search, arr, dep);
-            }
         }
     }
 }
 
 checkAddNearAvail = function(search, arr, dep) {
+    // make display string (in local context)
     let s = ( window.location.pathname.includes('/fr/')
             ? 'Du ' + arr.toLocaleDateString(navigator.language, { dateStyle: "medium" }) + ' au ' 
                 + dep.toLocaleDateString(navigator.language, { dateStyle: "medium" })
@@ -233,26 +253,31 @@ checkAddNearAvail = function(search, arr, dep) {
                 + dep.toLocaleDateString(navigator.language, { dateStyle: "medium" })
     );
     
+    // set request params and rebuild url
     search.set('info[arrival_date]', arr.toLocaleDateString('fr'));
     search.set('info[departure_date]', dep.toLocaleDateString('fr'));
     let url = window.location.origin + window.location.pathname + '?' + search.toString();
+    
+    // ajax get request
     $.ajax({
         url: window.location.origin + window.location.pathname + '?' + search.toString(),
         beforeSend: function(xhr) {
              //xhr.setRequestHeader("Authorization", "Bearer 6QXNMEMFHNY4FJ5ELNFMP5KRW52WFXN5")
         }, success: function(data){
-            // console.log(data.includes('id="no_rooms_available"'));
-            $('#near_avail').append(
-                $('<div></div>').addClass('col-xs-6 col-md-4')
-                    .append(
-                        ( data.includes('class="be__no-room-available"')
-                        ?
-                        $('<span style="text-decoration: line-through"></span').text(s)
-                        :
-                        $('<a href="' +url+ '"></a>').text(s)
-                        )
-                        )
-            );
+            // when answer received, display availability info or link
+            $('<div></div>')
+                .addClass('col-sm-6 col-md-4')
+                .append(
+                    ( data.includes('class="be__no-room-available"')
+                    ?
+                    $('<span style="text-decoration: line-through"></span').text(s)
+                    :
+                    $('<a href="' +url+ '"></a>').text(s)
+                    )
+                    )
+                .insertBefore('#near_avail_spinner');
+            // hide spinner when all 9 results came back
+            $('#near_avail_spinner').toggleClass('hide', $('#near_avail>div').length>=10);
         }
     });
 }
