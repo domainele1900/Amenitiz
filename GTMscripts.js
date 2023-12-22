@@ -49,7 +49,7 @@ informationsDataLayer = function(evtName) {
         item.item_category = dates+'/'+
                             $('select[name="cart_item[total_adult]"]', $(elt)).val()+' adultes-'+
                             $('select[name="cart_item[total_children]"]', $(elt)).val()+' enfants'; 
-        item.price = $('.informations__room-info', $(elt)).text().match(/\d+ €/)[0];
+        item.price = $(elt).text().match(/\d+ €/)[0];
         items[i] = item;
     });
 
