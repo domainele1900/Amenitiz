@@ -30,7 +30,7 @@ bookingRoomDataLayer = function() {
         event: "view_item",
         ecommerce: {
             currency: "EUR",
-            value:  items[0].price,
+            value:  items.length ? items[0].price : 0,
             items: items
         }
     });
@@ -68,7 +68,7 @@ informationsDataLayer = function(evtName) {
  */
 $( document ).ready(function() {
     // -- add to book forms
-	$('form.form_booked').submit(function(e) { 
+	$('form.room_booked').on("submit", function(e) { 
 //		e.preventDefault(); 
         var f = $(e.target[0]).parents('form');
         var evtName = 'add_to_cart';
