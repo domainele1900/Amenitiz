@@ -180,7 +180,57 @@ $( document ).ready(function() {
         });
     
     });
+
+    if ( window.location.pathname.match('booking\/room')) {
+        // Hide guest rooms when children
+        toggleRoomsOnChildren($('#info_total_children').val()>0);
+        reorderRooms();
+        $('#info_total_children').on('change', function() { 
+            toggleRoomsOnChildren(this.value>0);
+            reorderRooms();
+        })
+        $('#info_total_adult').on('change', function() { 
+            reorderRooms();
+        })
+    }
 });
+
+toggleRoomsOnChildren = function(bShow) {
+    $('.be__rooms--card:contains("Barclay")').toggleClass('hide', bShow)
+    $('.be__rooms--card:contains("Orientale")').toggleClass('hide', bShow)
+    $('.be__rooms--card:contains("Louisiane")').toggleClass('hide', bShow)
+    $('.be__rooms--card:contains("Suite")').toggleClass('hide', bShow)
+}
+
+reorderRooms = function() {
+    var nbTot = parseInt($('#info_total_adult').val())+parseInt($('#info_total_children').val());
+    if (nbTot==2) {
+        $('.be__room-select').prepend($('.be__rooms--card:contains("Suite")'));
+        $('.be__room-select').prepend($('.be__rooms--card:contains("Louisiane")'));
+        $('.be__room-select').prepend($('.be__rooms--card:contains("Orientale")'));
+        $('.be__room-select').prepend($('.be__rooms--card:contains("Barclay")'));
+    } else if (nbTot==3) {
+        $('.be__room-select').prepend($('.be__room-select--card-title:contains("Pavillon")').parent());
+        $('.be__room-select').prepend($('.be__room-select--card-title:contains("Lodge")').parent());
+        $('.be__room-select').prepend($('.be__room-select--card-title:contains("Ty Nid")').parent());
+    } else if(nbTot>=4) {
+        $('.be__room-select').prepend($('.be__room-select--card-title:contains("Pavillon")').parent());
+        $('.be__room-select').prepend($('.be__room-select--card-title:contains("Lodge")').parent());
+    }
+}
+
+sortAccordingOccupancy = function() {
+    var listDiv = $('.be__room-select'), 
+    var rooms = $(".be__rooms--card").get() // an array
+
+    rooms = rooms.sort(function (a, b) {
+        var aCap = $(".be__room-select--card-title", a).text(),
+            bCap = $(".be__room-select--card-title", b).text()
+            return aKBPS > bKBPS ? -1 : aKBPS > bKBPS ? 1 : 0
+    })
+    theContainer.append(theRows)
+
+}
 
 
 /**
