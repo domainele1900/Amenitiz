@@ -108,7 +108,7 @@ $( document ).ready(function() {
     }); 
     
     // destroy cart form
-    $('form[action*="destroy-cart"]').submit(function(e) { 
+    $('form[action*="destroy-cart"]').on('submit', function(e) { 
 		// e.preventDefault(); 
         var f = $(e.target[0]).parents('form');
         var item= { 
@@ -128,16 +128,21 @@ $( document ).ready(function() {
     });
     
     // client info submit -> store lead variables in dataLayer
-    $('form#new_cart_customer').submit(function(e) { 
+    $('form[action*="/booking/info-to-cart"]').on('submit', function(e) { 
 		// e.preventDefault(); 
-        var s = '';
+        // cannot go to payment if occupancy not reached
+        if ($('.be__not_enough_room_alert').length) {
+            e.preventDefault();
+            alert($('.be__not_enough_room_alert').text());
+            return;
+        }
+        
         var vars= {}; 
-        if ((s = $('input#cart_customer_email').val())) {
-            vars.lead_email = s;
-            vars.lead_lastname = $('input#cart_customer_last_name').val();
-            vars.lead_firstname = $('input#cart_customer_first_name').val();
-            vars.lead_tel = $('input#cart_customer_phone').val();
-            
+        if ((vars.lead_email = $('input#cart_customer_email').val()) 
+           && (vars.lead_lastname = $('input#cart_customer_last_name').val())
+           && (vars.lead_firstname = $('input#cart_customer_first_name').val())
+           && (vars.lead_tel = $('input#cart_customer_phone').val())
+           && $('input#cart_customer_title').val()) {
             vars.lead_dates = $('.informations__header h3').text().replace(/\s+/g, ' ');
             var rooms= []; 
             $('.informations__room-info').each(function(i, elt) { 
@@ -278,6 +283,18 @@ checkAddNearAvail = function(search, arr, dep) {
                 .insertBefore('#near_avail_spinner');
             // hide spinner when all 9 results came back
             $('#near_avail_spinner').toggleClass('hide', $('#near_avail>div').length>=10);
+        }
+    });
+}
+
+/**
+ * Disable 'Finaliser ma réservationon' button if not enough rooms for nb people
+ */
+checkOccupancyOnInformationSubmit = function() {
+    $('form[action*="/booking/info-to-cart"]').on('submit', function (e) {
+        if ($('.be__not_enough_room_alert').length) {
+            e.preventDefault();
+            alert($('.be__not_enough_room_alert').text());
         }
     });
 }
