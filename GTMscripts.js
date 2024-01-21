@@ -192,6 +192,11 @@ $( document ).ready(function() {
         $('#info_total_adult').on('change', function() { 
             reorderRooms();
         })
+
+        // reorder prices to have 30% first
+        $('.js__room--pricing-area').each(function() {
+            $('.be__rooms--price:contains("30%")', $(this)).insertAfter($('.be__rooms--price-title', $(this)));
+        })
     }
 });
 
@@ -218,20 +223,6 @@ reorderRooms = function() {
         $('.be__room-select').prepend($('.be__room-select--card-title:contains("Lodge")').parent());
     }
 }
-
-sortAccordingOccupancy = function() {
-    var listDiv = $('.be__room-select'), 
-    var rooms = $(".be__rooms--card").get() // an array
-
-    rooms = rooms.sort(function (a, b) {
-        var aCap = $(".be__room-select--card-title", a).text(),
-            bCap = $(".be__room-select--card-title", b).text()
-            return aKBPS > bKBPS ? -1 : aKBPS > bKBPS ? 1 : 0
-    })
-    theContainer.append(theRows)
-
-}
-
 
 /**
  * no availability handling: propose other date
