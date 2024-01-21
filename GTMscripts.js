@@ -222,6 +222,8 @@ reorderRooms = function() {
         $('.be__room-select').prepend($('.be__room-select--card-title:contains("Pavillon")').parent());
         $('.be__room-select').prepend($('.be__room-select--card-title:contains("Lodge")').parent());
     }
+
+    $('.be__room-select--card-title:contains("Ty Nid")').parent().toggleClass('hide', (nbTot==4 && parseInt($('#info_total_children').val())))
 }
 
 /**
