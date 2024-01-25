@@ -82,8 +82,17 @@ border-bottom: solid 1px #eeeeee;
 
 /* --- Home specific --- */
 
+#block_112790 .site__block--style h1, #block_112790 .site__block--style h2, #block_112790 .site__block--style h2 a {
+    max-width: 860px;
+}
+@media only screen and (max-width: 512px) {
+	#block_112790 .site__block--style h1, #block_112790 .site__block--style h2, #block_112790 .site__block--style h2 a {
+		font-size: 38px !important;
+	}
+}
+
 @media screen and (max-width: 768px) {
-	#block_112790 .site__block--style h1 {
+	#block_112790 .site__block--style h1, #block_112790 .site__block--style h2, #block_112790 .site__block--style h2 a {
 		font-size: 48px !important;
 	}
 }
