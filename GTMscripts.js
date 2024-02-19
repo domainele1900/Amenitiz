@@ -205,6 +205,18 @@ toggleRoomsOnChildren = function(bShow) {
     $('.be__rooms--card:contains("Orientale")').toggleClass('hide', bShow)
     $('.be__rooms--card:contains("Louisiane")').toggleClass('hide', bShow)
     $('.be__rooms--card:contains("Suite")').toggleClass('hide', bShow)
+
+    if ($('.be__rooms--card:visible').length==0) {
+        if ($('.be__no-room-available').length==0) {
+            addNoAvailabilityMessage();
+        } else {
+            $('#near_avail').remove();
+        }
+        checkNearDates();
+        $('.be__no-room-available').show();
+    } else {
+        $('.be__no-room-available').hide();
+    }
 }
 
 reorderRooms = function() {
@@ -257,11 +269,11 @@ checkNearDates = function () {
             $('<h4></h4>')
             .text(( window.location.pathname.includes('/fr/') 
                 ? 
-                'Autres disponibilités à cette période pour '+ search.get('info[total_adult]') +' adultes '+
-                  (search.get('info[total_children]')>0 ? search.get('info[total_children]') +' enfants' : '')
+                'Autres disponibilités à cette période pour '+ $('#info_total_adult').val() +' adultes '+
+                  ($('#info_total_children').val()>0 ? $('#info_total_children').val() +' enfants' : '')
                 :
-                'Other availabilities at this period for '+ search.get('info[total_adult]') +' adults '+
-                    (search.get('info[total_children]')>0 ? search.get('info[total_children]') +' children' : '')
+                'Other availabilities at this period for '+ $('#info_total_adult').val() +' adults '+
+                    ($('#info_total_children').val()>0 ? $('#info_total_children').val() +' children' : '')
                ) + ':')
         );
         // add spinner div
@@ -328,6 +340,35 @@ checkAddNearAvail = function(search, arr, dep) {
             $('#near_avail_spinner').toggleClass('hide', $('#near_avail>div').length>=10);
         }
     });
+}
+
+/**
+ * Adds no availability section
+ */
+addNoAvailabilityMessage = function() {
+    if (window.location.pathname.match('/en/')) {
+        $('.be__wrapper').append('\
+            <div class="be__no-room-available" id="no_rooms_available">\
+                <div>\
+                    <p>No accommodation is available for your search.</p>\
+                    <p><br></p>\
+                    <p>If possible, try a search with other dates...</p>\
+                    <p><br></p>\
+                    <p>Remember that in summer, the minimum stay is 2 nights for the guest rooms and 3 nights for the lodgings.</p>\
+                </div>\
+            </div>');   
+    } else {
+        $('.be__wrapper').append('\
+            <div class="be__no-room-available" id="no_rooms_available">\
+                <div>\
+                    <p>Aucun hébergement n\'est disponible pour votre recherche.</p>\
+                    <p><br></p>\
+                    <p>Si possible, essayez une recherche avec d\'autres dates...</p>\
+                    <p><br></p>\
+                    <p>En été, le séjour minimum est de 2 nuits pour les chambres d\'hôtes et 3 nuits pour les gîtes.</p>\
+                </div>\
+            </div>');        
+    }
 }
 
 /**
