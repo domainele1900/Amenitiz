@@ -257,75 +257,6 @@ td.fc-widget-content {
 	}
 }
 /* --- calendrier dispo--- */
-/* --- Rooms specific pages --- */
-
-/* --- mobile book CTA --- */
-.mobile__header-model-1 #header .col-xs-3:first-child {
-    background-color: transparent;
-}
-
-.mobile__header-model-1 #header .calendar {
-    width: 100%;
-    height: 100%;
-    padding-top: 1em;
-}
-.mobile__header-model-1 #header .calendar a:not(.style__button) {
-	display: none;
-}
-.mobile__header-model-1 #header .calendar a.style__button {
-    font-size: 12px;
-    line-height: 12px;
-    min-width: 0;
-    padding: 10px 5px;
-}
-.mobile__header-model-1 .dropdown-menu {
-    min-width: auto;
-}
-/* --- mobile book CTA --- */
-
-/* --- other language menu --- */
-.mobile__header-model-1 .dropdown-toggle img {
-	width: 16px;
-	height: 16px;
-}
-.mobile__header-model-1 #header svg.icon-caret-down {
-    height: 16px;
-    width: 16px;
-     margin: 2px;
-}
-.mobile__header-model-1 .dropdown-menu {
-    min-width: auto;
-}
-.mobile__header-model-1 li.site__navbar-language--dropbtn {
-    margin: 0;
-}
-
-.mobile__header-model-1 #logo_text {
-	font-size: 26px!important;
-}
-
-.mobile__header-model-1 .col-xs-1 {
-	padding:0;
-}
-.mobile__header-model-1 .col-xs-2 {
-	padding-left: 5px;
-}
-/* --- other language menu --- */
-
-.img_separator hr {
-	width: 200px!important;
-	background-color: #b58c7d!important;
-}
-
-.room-model-2__name {
-    display: none;
-}
-.room-model-2__info .j-block-subtitle {
-    text-align:center!important; 
-}
-.room__amenities--list {
-	margin-left: 8px;
-}
 
 /* --- Boissons specific --- */
 
@@ -346,3 +277,9 @@ td.fc-widget-content {
 .pricing_table_block td.highlight {
     background-color: #F0E8E5 !important;
 }
+
+/* --- style italic tag in columns with images used for photos copyright --- */
+.j-sub-block-text i {
+    font-size:80%;
+    color:#bbb
+  }
