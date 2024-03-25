@@ -283,3 +283,12 @@ td.fc-widget-content {
     font-size:80%;
     color:#bbb
   }
+
+  /* --- set no styled link default color --- */
+  .site_blocks a:not([class]) {
+    color:  #4a7382 !important;
+}
+
+.site_blocks a:not([class]):hover {
+    text-decoration: underline;
+}
