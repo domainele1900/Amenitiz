@@ -75,4 +75,12 @@ $( document ).ready(function() {
 		// open url
 		window.open(url, '_blank');
 	});
+
+	// check if masonry lib is included
+	if (!$.isFunction($.fn.masonry)) { (function( $ ){
+		$.fn.masonry = function() {
+		   console.log('masonry still missing');
+		   return this;
+		}; 
+	 })( jQuery ); }	
 });

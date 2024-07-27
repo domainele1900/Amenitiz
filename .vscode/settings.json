@@ -1,0 +1,14 @@
+{
+    "MinifyAll.PrefixOfNewMinifiedFiles": ".min",
+    "MinifyAll.minifyOnSave": true,
+    "MinifyAll.disableSass": true,
+    "MinifyAll.disableScss": true,
+    "MinifyAll.disableTwig": true,
+    "MinifyAll.disableXml": true,
+    "MinifyAll.disablePhp": true,
+    "MinifyAll.disableLess": true,
+    "MinifyAll.disableJsonc": true,
+    "MinifyAll.disableMessages": true,
+    "MinifyAll.disableJson": true,
+    "MinifyAll.disableHtml": true
+}
