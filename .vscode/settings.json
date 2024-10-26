@@ -1,6 +1,5 @@
 {
     "MinifyAll.PrefixOfNewMinifiedFiles": ".min",
-    "MinifyAll.minifyOnSave": true,
     "MinifyAll.disableSass": true,
     "MinifyAll.disableScss": true,
     "MinifyAll.disableTwig": true,
