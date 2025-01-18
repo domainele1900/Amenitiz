@@ -1,3 +1,5 @@
+var curHash = '';
+
 $( document ).ready(function() {
 	$("#block_112785 a.style__button").clone().appendTo(".mobile__header-model-1 #header .calendar")
 	/* --- copy the menu language in mobile site header --- */
@@ -75,4 +77,167 @@ $( document ).ready(function() {
 		// open url
 		window.open(url, '_blank');
 	});
+
+	var myInterval = setInterval(checkBookingProcess, 100);
 });
+
+
+checkBookingProcess = function () {
+    if (curHash!=window.location.hash) {
+        curHash = window.location.hash;
+
+        if (curHash=='#RoomSelection-BE') {
+
+            // reorder price rates to have 30% first
+            $('div[data-testid="rates"]').each(function() {
+                $('div[class*="styles-module__rate__"]:contains("30%")', $(this)).insertAfter($('div[class*="styles-module__header_"]', $(this)));
+            })
+
+            // get search params
+            var params = new URLSearchParams(window.location.search)
+            var nbTotOccup = parseInt(params.get('adults'))+parseInt(params.get('children'));
+
+            // hide guest rooms if search contains children
+            if (params.get('children') > 0) {
+                $('div[data-testid="room-tile"]:contains("Barclay")').addClass('hide');
+                $('div[data-testid="room-tile"]:contains("Orientale")').addClass('hide');
+                $('div[data-testid="room-tile"]:contains("Louisiane")').addClass('hide');
+                $('div[data-testid="room-tile"]:contains("Suite")').addClass('hide');
+                // hide Ty Nid if search for 4 including 1+ child
+                $('div[data-testid="room-tile"]:contains("Ty Nid")').toggleClass('hide', nbTotOccup==4);
+        
+                // update available rooms number
+                var nb = $('div[data-testid="room-tile"]:visible').length;
+                var nbMax = $('div[data-testid="room-tile"]').length;
+                var s = $('div[data-testid="rooms-available"]').text();
+                $('div[data-testid="rooms-available"]').text(s.replace(nbMax, nb));
+            }
+
+            // reorder rooms given occupancy requested
+            /* if (nbTotOccup==2) {
+                $('div[data-testid="room-tile"]:contains("Suite")').insertAfter($('div[data-testid="rooms-available"]'));
+                $('div[data-testid="room-tile"]:contains("Louisiane")').insertAfter($('div[data-testid="rooms-available"]'));
+                $('div[data-testid="room-tile"]:contains("Orientale")').insertAfter($('div[data-testid="rooms-available"]'));
+                $('div[data-testid="room-tile"]:contains("Barclay")').insertAfter($('div[data-testid="rooms-available"]'));
+            } else*/ if (nbTotOccup==3) {
+                $('div[data-testid="room-tile"]:contains("Pavillon")').insertAfter($('div[data-testid="rooms-available"]'));
+                $('div[data-testid="room-tile"]:contains("Lodge")').insertAfter($('div[data-testid="rooms-available"]'));
+                $('div[data-testid="room-tile"]:contains("Ty Nid")').insertAfter($('div[data-testid="rooms-available"]'));
+            } else if(nbTotOccup>=4) {
+                $('div[data-testid="room-tile"]:contains("Pavillon")').insertAfter($('div[data-testid="rooms-available"]'));
+                $('div[data-testid="room-tile"]:contains("Lodge")').insertAfter($('div[data-testid="rooms-available"]'));
+            }
+
+            $('#near_avail').remove()
+
+            if ($('div[data-testid="room-tile"]:visible').length==0) {
+                checkNearDates();
+            }
+        } 
+    }
+}
+
+/**
+ * no availability handling: propose other date
+ */
+checkNearDates = function () {
+        // get arrival and departure dates from query string
+        var search = new URLSearchParams(window.location.search);
+        var arr = search.get('start_date') ? new Date(search.get('start_date')) : null;
+        var dep = search.get('end_date') ? new Date(search.get('end_date')) : null;
+        // if no departure, set it to arrival +2 days
+        if (!dep) {
+            dep = arr; 
+            if (arr) {
+                dep.setDate(arr.getDate()+2)
+            }
+        }
+        // if no dates, get out
+        if (!arr ||!dep) {
+            return;
+        }
+        var today = new Date(); today.setTime(0,0,0,0);
+        var nb_days = (dep-arr) / (1000*60*60*24);
+
+        var locale=JSON.parse($('div[data-react-props]').attr('data-react-props')).locale || 'fr';
+
+        var texte = { fr: 'Disponibilités approchantes', en: 'Nearby availabities', 
+                    de: 'Nahe liegende Verfügbarkeiten', it: 'Disponibilità nelle vicinanze', 
+                    es: 'Disponibilidades cercanas', nl: 'Beschikbaarheid in de buurt', }
+
+
+        // add html elements to the not available rooms div
+        $('div[data-testid="rooms-available"]').after('<div class="row small" id="near_avail" style="margin: 1.5em 1em"></div>');
+        $('#near_avail').append(
+            $('<h5></h5>').text(texte[locale] + ':')
+        );
+        // add spinner div
+        // $('#near_avail').append('<div class="col-sm-6 col-md-4" id="near_avail_spinner"><i class="fas fa-spinner fa-spin "></i></div>');
+
+        // get starting dates: either from tomorrow on or -2 days of original request
+        if (Math.round((arr-today)/(1000*60*60*24),0) > 2) {
+            arr.setDate(arr.getDate()-2); 
+            dep.setDate(dep.getDate()-2); 
+        } else {
+            arr = today; arr.setDate(arr.getDate()+1);
+            dep = arr; dep.setDate(arr.getDate() + nb_days);
+        }
+        
+        // Loop on 5 days
+        for (let i = 1; i < 6; i++) {
+            if(arr.toISOString().split('T')[0]!=search.get('start_date') || dep.toISOString().split('T')[0]!=search.get('end_date')) {
+                checkAddNearAvail(search, arr, dep, locale);
+            }
+
+            arr.setDate(arr.getDate()+1);
+            if (arr < dep) {
+                checkAddNearAvail(search, arr, dep, locale);
+            }
+            
+            dep.setDate(dep.getDate()+1);
+        }
+}
+
+checkAddNearAvail = function(search, arr, dep, locale) {
+    // set request params and rebuild url
+    let arr_str = arr.toISOString().split('T')[0];
+    let dep_str = dep.toISOString().split('T')[0];
+    search.set('start_date', arr_str);
+    search.set('end_date', dep_str);
+
+    let apiurl = 'https://www.le1900.com/'+locale+'/api_public/v1/client_booking_engine/room_availability?'+
+        'arrival_date='+search.get('start_date')+'&departure_date='+search.get('end_date')+'&total_adults='+search.get('adults')+'&total_children='+search.get('children');
+    
+    // link urk
+    let url = window.location.origin + window.location.pathname + '?' + search.toString() + window.location.hash;
+    
+    // make display string (in local context)
+    let s = arr.toLocaleDateString(locale, { dateStyle: "medium" }) + ' -> ' + dep.toLocaleDateString(locale, { dateStyle: "medium" });
+
+    $('#near_avail').append(
+        $('<div id="chk-'+arr_str+'-'+dep_str+'"></div>')
+        .addClass('col-md-6 col-lg-4')
+        .append('<a>'+s+'</a>')
+        .append('&nbsp;<i class="fas fa-spinner fa-spin "></i>')
+        );
+
+    
+    // ajax get request
+    $.ajax({
+        url: apiurl,
+        beforeSend: function(xhr) {
+            //xhr.setRequestHeader("Authorization", "Bearer 6QXNMEMFHNY4FJ5ELNFMP5KRW52WFXN5")
+        }, error: function(data) {
+            console.log(data);
+        }, success: function(data){
+			// when answer received, set link url or strike through
+            if ( data && data['success'] && data['data']['rooms'].length ) {
+                $('#chk-'+arr_str+'-'+dep_str+' a').attr('href', url);
+                $('#chk-'+arr_str+'-'+dep_str+' i').removeClass('fa-spinner fa-spin').addClass('fa-check');
+            } else {
+                $('#chk-'+arr_str+'-'+dep_str+' a').css('text-decoration', 'line-through')
+                $('#chk-'+arr_str+'-'+dep_str+' i').removeClass('fa-spinner fa-spin').addClass('fa-times');
+            }
+        }
+    });
+}
