@@ -48,7 +48,7 @@ $( document ).ready(function() {
 
 	$('.pricing_table_block td').on("click", function(e) {
 		// if not on grades marees, return
-		if ($('h1.j-block-title').text().match(/grandes marées|great tides/) == null) {
+		if (!$('.grandes_marees').length) {
 			return;
 		}
 		// get day in 1st col
@@ -59,21 +59,22 @@ $( document ).ready(function() {
 		
 		// change Month to MM in string
 		var ms = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
-				'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+				'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',
+				"Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember",
+				"Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre",
+				"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+				"Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"
+            ];
 		d = d.replace(/([a-zA-Zéû]+)/g, function(m) { var i=ms.indexOf(m) % 12 + 1; return i==0? '' : (i<10 ? '0' : '' ) + i; });
 		// change date format to yyyy/mm/dd
 		d = d.replace(/([a-zA-Z\s]+)(\d{1,2})\s+(\d{2})\s+(\d{4})\s+/, '$4/$3/$2')
 
 		var dt = new Date(d);
-		
-		// get language
-		var m = window.location.pathname.match(/\/[a-z]{2}\//);
 
-		// make url to booking page for selected date
-		var url = window.location.origin + (m ? m[0] : '/') + 'booking/room?info[arrival_date]='+dt.toLocaleDateString("fr");
+        var url = window.location.origin + window.location.pathname + '?start_date='+dt.toISOString().split('T')[0];
 		dt.setDate((dt.getDate()+1));
-		url += '&info[departure_date]='+dt.toLocaleDateString("fr")+'&info[total_adult]=2';
-
+		url += '&end_date='+dt.toISOString().split('T')[0]+'&adults=2&children=0#RoomSelection-BE';
+	
 		// open url
 		window.open(url, '_blank');
 	});
@@ -171,8 +172,6 @@ checkNearDates = function () {
         $('#near_avail').append(
             $('<h5></h5>').text(texte[locale] + ':')
         );
-        // add spinner div
-        // $('#near_avail').append('<div class="col-sm-6 col-md-4" id="near_avail_spinner"><i class="fas fa-spinner fa-spin "></i></div>');
 
         // get starting dates: either from tomorrow on or -2 days of original request
         if (Math.round((arr-today)/(1000*60*60*24),0) > 2) {
