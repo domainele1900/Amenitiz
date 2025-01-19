@@ -86,7 +86,7 @@ $( document ).ready(function() {
 checkBookingProcess = function () {
     if (curHash!=window.location.hash) {
         
-        if (curHash=='#RoomSelection-BE') {
+        if (window.location.hash=='#RoomSelection-BE') {
             // do something only if rooms selection displayed
             if ($('div[data-testid="rooms-available"]')) {
                 curHash = window.location.hash;
