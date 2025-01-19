@@ -88,7 +88,7 @@ checkBookingProcess = function () {
         
         if (window.location.hash=='#RoomSelection-BE') {
             // do something only if rooms selection displayed
-            if ($('div[data-testid="rooms-available"]')) {
+            if ($('div[data-testid="rooms-available"]').length) {
                 curHash = window.location.hash;
 
                 // reorder price rates to have 30% first
