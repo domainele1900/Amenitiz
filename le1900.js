@@ -85,56 +85,61 @@ $( document ).ready(function() {
 
 checkBookingProcess = function () {
     if (curHash!=window.location.hash) {
-        curHash = window.location.hash;
-
-        if (curHash=='#RoomSelection-BE') {
-
-            // reorder price rates to have 30% first
-            $('div[data-testid="rates"]').each(function() {
-                $('div[class*="styles-module__rate__"]:contains("30%")', $(this)).insertAfter($('div[class*="styles-module__header_"]', $(this)));
-            })
-
-            // get search params
-            var params = new URLSearchParams(window.location.search)
-            var nbTotOccup = parseInt(params.get('adults'))+parseInt(params.get('children'));
-
-            // hide guest rooms if search contains children
-            if (params.get('children') > 0) {
-                $('div[data-testid="room-tile"]:contains("Barclay")').addClass('hide');
-                $('div[data-testid="room-tile"]:contains("Orientale")').addClass('hide');
-                $('div[data-testid="room-tile"]:contains("Louisiane")').addClass('hide');
-                $('div[data-testid="room-tile"]:contains("Suite")').addClass('hide');
-                // hide Ty Nid if search for 4 including 1+ child
-                $('div[data-testid="room-tile"]:contains("Ty Nid")').toggleClass('hide', nbTotOccup==4);
         
-                // update available rooms number
-                var nb = $('div[data-testid="room-tile"]:visible').length;
-                var nbMax = $('div[data-testid="room-tile"]').length;
-                var s = $('div[data-testid="rooms-available"]').text();
-                $('div[data-testid="rooms-available"]').text(s.replace(nbMax, nb));
-            }
+        if (curHash=='#RoomSelection-BE') {
+            // do something only if rooms selection displayed
+            if ($('div[data-testid="rooms-available"]')) {
+                curHash = window.location.hash;
 
-            // reorder rooms given occupancy requested
-            /* if (nbTotOccup==2) {
-                $('div[data-testid="room-tile"]:contains("Suite")').insertAfter($('div[data-testid="rooms-available"]'));
-                $('div[data-testid="room-tile"]:contains("Louisiane")').insertAfter($('div[data-testid="rooms-available"]'));
-                $('div[data-testid="room-tile"]:contains("Orientale")').insertAfter($('div[data-testid="rooms-available"]'));
-                $('div[data-testid="room-tile"]:contains("Barclay")').insertAfter($('div[data-testid="rooms-available"]'));
-            } else*/ if (nbTotOccup==3) {
-                $('div[data-testid="room-tile"]:contains("Pavillon")').insertAfter($('div[data-testid="rooms-available"]'));
-                $('div[data-testid="room-tile"]:contains("Lodge")').insertAfter($('div[data-testid="rooms-available"]'));
-                $('div[data-testid="room-tile"]:contains("Ty Nid")').insertAfter($('div[data-testid="rooms-available"]'));
-            } else if(nbTotOccup>=4) {
-                $('div[data-testid="room-tile"]:contains("Pavillon")').insertAfter($('div[data-testid="rooms-available"]'));
-                $('div[data-testid="room-tile"]:contains("Lodge")').insertAfter($('div[data-testid="rooms-available"]'));
-            }
+                // reorder price rates to have 30% first
+                $('div[data-testid="rates"]').each(function() {
+                    $('div[class*="styles-module__rate__"]:contains("30%")', $(this)).insertAfter($('div[class*="styles-module__header_"]', $(this)));
+                })
 
-            $('#near_avail').remove()
+                // get search params
+                var params = new URLSearchParams(window.location.search)
+                var nbTotOccup = parseInt(params.get('adults'))+parseInt(params.get('children'));
 
-            if ($('div[data-testid="room-tile"]:visible').length==0) {
-                checkNearDates();
+                // hide guest rooms if search contains children
+                if (params.get('children') > 0) {
+                    $('div[data-testid="room-tile"]:contains("Barclay")').addClass('hide');
+                    $('div[data-testid="room-tile"]:contains("Orientale")').addClass('hide');
+                    $('div[data-testid="room-tile"]:contains("Louisiane")').addClass('hide');
+                    $('div[data-testid="room-tile"]:contains("Suite")').addClass('hide');
+                    // hide Ty Nid if search for 4 including 1+ child
+                    $('div[data-testid="room-tile"]:contains("Ty Nid")').toggleClass('hide', nbTotOccup==4);
+            
+                    // update available rooms number
+                    var nb = $('div[data-testid="room-tile"]:visible').length;
+                    var nbMax = $('div[data-testid="room-tile"]').length;
+                    var s = $('div[data-testid="rooms-available"]').text();
+                    $('div[data-testid="rooms-available"]').text(s.replace(nbMax, nb));
+                }
+
+                // reorder rooms given occupancy requested
+                /* if (nbTotOccup==2) {
+                    $('div[data-testid="room-tile"]:contains("Suite")').insertAfter($('div[data-testid="rooms-available"]'));
+                    $('div[data-testid="room-tile"]:contains("Louisiane")').insertAfter($('div[data-testid="rooms-available"]'));
+                    $('div[data-testid="room-tile"]:contains("Orientale")').insertAfter($('div[data-testid="rooms-available"]'));
+                    $('div[data-testid="room-tile"]:contains("Barclay")').insertAfter($('div[data-testid="rooms-available"]'));
+                } else*/ if (nbTotOccup==3) {
+                    $('div[data-testid="room-tile"]:contains("Pavillon")').insertAfter($('div[data-testid="rooms-available"]'));
+                    $('div[data-testid="room-tile"]:contains("Lodge")').insertAfter($('div[data-testid="rooms-available"]'));
+                    $('div[data-testid="room-tile"]:contains("Ty Nid")').insertAfter($('div[data-testid="rooms-available"]'));
+                } else if(nbTotOccup>=4) {
+                    $('div[data-testid="room-tile"]:contains("Pavillon")').insertAfter($('div[data-testid="rooms-available"]'));
+                    $('div[data-testid="room-tile"]:contains("Lodge")').insertAfter($('div[data-testid="rooms-available"]'));
+                }
+
+                $('#near_avail').remove()
+
+                if ($('div[data-testid="room-tile"]:visible').length==0) {
+                    checkNearDates();
+                }
             }
-        } 
+        } else {
+            curHash = window.location.hash;
+        }
     }
 }
 
@@ -224,13 +229,18 @@ checkAddNearAvail = function(search, arr, dep, locale) {
     // ajax get request
     $.ajax({
         url: apiurl,
-        beforeSend: function(xhr) {
-            //xhr.setRequestHeader("Authorization", "Bearer 6QXNMEMFHNY4FJ5ELNFMP5KRW52WFXN5")
-        }, error: function(data) {
-            console.log(data);
-        }, success: function(data){
+        success: function(data){
+            let nbRooms = data && data['success'] && data['data'] && data['data']['rooms'] ? data['data']['rooms'].length : 0;
+            // if search with children, remove guest rooms from count, and Ty Nid as well if tot occuppancy is 4
+            if (parseInt(search.get('children'))) {
+                nbRooms -= data['data']['rooms'].filter( r => r.name.match(/Barclay|Orientale|Louisiane|Suite/i)).length;
+                if (parseInt(search.get('adults'))+parseInt(search.get('children'))==4) {
+                    nbRooms -= data['data']['rooms'].filter( r => r.name.match(/Ty N/i)).length;
+                }
+            }
+
 			// when answer received, set link url or strike through
-            if ( data && data['success'] && data['data']['rooms'].length ) {
+            if ( nbRooms>0 ) {
                 $('#chk-'+arr_str+'-'+dep_str+' a').attr('href', url);
                 $('#chk-'+arr_str+'-'+dep_str+' i').removeClass('fa-spinner fa-spin').addClass('fa-check');
             } else {
