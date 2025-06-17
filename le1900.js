@@ -92,29 +92,29 @@ checkBookingProcess = function () {
                 curHash = window.location.hash;
 
                 // reorder price rates to have 30% first
-                $('div[data-testid="rates"]').each(function() {
-                    $('div[class*="styles-module__rate__"]:contains("30%")', $(this)).insertAfter($('div[class*="styles-module__header_"]', $(this)));
-                })
+                // $('div[data-testid="rates"]').each(function() {
+                //     $('div[class*="styles-module__rate__"]:contains("30%")', $(this)).insertAfter($('div[class*="styles-module__header_"]', $(this)));
+                // })
 
                 // get search params
                 var params = new URLSearchParams(window.location.search)
                 var nbTotOccup = parseInt(params.get('adults'))+parseInt(params.get('children'));
 
-                // hide guest rooms if search contains children
-                if (params.get('children') > 0) {
-                    $('div[data-testid="room-tile"]:contains("Barclay")').addClass('hide');
-                    $('div[data-testid="room-tile"]:contains("Orientale")').addClass('hide');
-                    $('div[data-testid="room-tile"]:contains("Louisiane")').addClass('hide');
-                    $('div[data-testid="room-tile"]:contains("Suite")').addClass('hide');
-                    // hide Ty Nid if search for 4 including 1+ child
-                    $('div[data-testid="room-tile"]:contains("Ty Nid")').toggleClass('hide', nbTotOccup==4);
+                // hide guest rooms if search contains children --- now handled by Amenitiz ---
+                // if (params.get('children') > 0) {
+                //     $('div[data-testid="room-tile"]:contains("Barclay")').addClass('hide');
+                //     $('div[data-testid="room-tile"]:contains("Orientale")').addClass('hide');
+                //     $('div[data-testid="room-tile"]:contains("Louisiane")').addClass('hide');
+                //     $('div[data-testid="room-tile"]:contains("Suite")').addClass('hide');
+                //     // hide Ty Nid if search for 4 including 1+ child
+                //     $('div[data-testid="room-tile"]:contains("Ty Nid")').toggleClass('hide', nbTotOccup==4);
             
-                    // update available rooms number
-                    var nb = $('div[data-testid="room-tile"]:visible').length;
-                    var nbMax = $('div[data-testid="room-tile"]').length;
-                    var s = $('div[data-testid="rooms-available"]').text();
-                    $('div[data-testid="rooms-available"]').text(s.replace(nbMax, nb));
-                }
+                //     // update available rooms number
+                //     var nb = $('div[data-testid="room-tile"]:visible').length;
+                //     var nbMax = $('div[data-testid="room-tile"]').length;
+                //     var s = $('div[data-testid="rooms-available"]').text();
+                //     $('div[data-testid="rooms-available"]').text(s.replace(nbMax, nb));
+                // }
 
                 // reorder rooms given occupancy requested
                 /* if (nbTotOccup==2) {
