@@ -10,5 +10,7 @@
     "MinifyAll.disableMessages": true,
     "MinifyAll.disableJson": true,
     "MinifyAll.disableHtml": true,
+    "MinifyAll.disableJavascript": true,
+    "MinifyAll.minifyOnSave": true,
     "MinifyAll.minifyOnSaveToNewFile": true
 }

@@ -80,6 +80,14 @@ $( document ).ready(function() {
 	});
 
 	var myInterval = setInterval(checkBookingProcess, 100);
+
+    // add GA4 pave_view events for booking process
+    window.addEventListener('hashchange', function() {
+        gtag('event', 'page_view', {
+            page_title: window.location.hash || window.location.pathname,
+            page_location: window.location.href
+        });
+    });
 });
 
 
@@ -101,20 +109,20 @@ checkBookingProcess = function () {
                 var nbTotOccup = parseInt(params.get('adults'))+parseInt(params.get('children'));
 
                 // hide guest rooms if search contains children --- now handled by Amenitiz ---
-                // if (params.get('children') > 0) {
-                //     $('div[data-testid="room-tile"]:contains("Barclay")').addClass('hide');
-                //     $('div[data-testid="room-tile"]:contains("Orientale")').addClass('hide');
-                //     $('div[data-testid="room-tile"]:contains("Louisiane")').addClass('hide');
-                //     $('div[data-testid="room-tile"]:contains("Suite")').addClass('hide');
-                //     // hide Ty Nid if search for 4 including 1+ child
-                //     $('div[data-testid="room-tile"]:contains("Ty Nid")').toggleClass('hide', nbTotOccup==4);
+                if (params.get('children') > 0) {
+                    $('div[data-testid="room-tile"]:contains("Barclay")').addClass('hide');
+                    $('div[data-testid="room-tile"]:contains("Orientale")').addClass('hide');
+                    $('div[data-testid="room-tile"]:contains("Louisiane")').addClass('hide');
+                    $('div[data-testid="room-tile"]:contains("Suite")').addClass('hide');
+                    // hide Ty Nid if search for 4 including 1+ child
+                    $('div[data-testid="room-tile"]:contains("Ty Nid")').toggleClass('hide', nbTotOccup==4);
             
-                //     // update available rooms number
-                //     var nb = $('div[data-testid="room-tile"]:visible').length;
-                //     var nbMax = $('div[data-testid="room-tile"]').length;
-                //     var s = $('div[data-testid="rooms-available"]').text();
-                //     $('div[data-testid="rooms-available"]').text(s.replace(nbMax, nb));
-                // }
+                    // update available rooms number
+                    var nb = $('div[data-testid="room-tile"]:visible').length;
+                    var nbMax = $('div[data-testid="room-tile"]').length;
+                    var s = $('div[data-testid="rooms-available"]').text();
+                    $('div[data-testid="rooms-available"]').text(s.replace(nbMax, nb));
+                }
 
                 // reorder rooms given occupancy requested
                 /* if (nbTotOccup==2) {
