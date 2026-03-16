@@ -129,7 +129,7 @@ checkBookingProcess = function () {
             if ($('div[data-testid="rooms-available"]').length) {
 
                 // if display not ready, exit to wait....
-                if ($('div[data-testid="room-tile"]').length) {
+                if (!$('div[data-testid="room-tile"]').length) {
                     return;
                 }
 
