@@ -83,12 +83,42 @@ $( document ).ready(function() {
 
     // add GA4 pave_view events for booking process
     window.addEventListener('hashchange', function() {
-        gtag('event', 'page_view', {
-            page_title: window.location.hash || window.location.pathname,
-            page_location: window.location.href
-        });
+        trackVirtualPage();
     });
 });
+
+trackVirtualPage = function () {
+
+  var hash = window.location.hash;
+  if(hash.startsWith("#ExtraSelection")) {
+    hash = "#ExtraSelection";
+  }
+
+  var stepMap = {
+    "#DatesGuests-BE": "reservation/dates-guests",
+    "#RoomSelection-BE": "reservation/room-selection",
+    "#ExtraSelection": "reservation/extras",
+    "#GuestInfo-BE": "reservation/guest-info",
+    "#CheckoutPage-BE": "reservation/payment",
+    "#ConfirmLoading-BE": "reservation/confirmation-loading",
+    "#Confirmed-BE": "reservation/confirmed"
+  };
+
+  var page = stepMap[hash];
+
+  if(page){
+    gtag('event', 'page_view', {
+      page_title: page,
+      page_location: window.location.origin + "/" + page + window.location.search,
+      start_date: new URLSearchParams(window.location.search).get('start_date'),
+      end_date: new URLSearchParams(window.location.search).get('end_date'),
+      adults: new URLSearchParams(window.location.search).get('adults'),
+      children: new URLSearchParams(window.location.search).get('children')
+    });
+
+    console.log("GA4 virtual page:", page + window.location.search);
+  }
+}
 
 
 checkBookingProcess = function () {
@@ -97,6 +127,12 @@ checkBookingProcess = function () {
         if (window.location.hash=='#RoomSelection-BE') {
             // do something only if rooms selection displayed
             if ($('div[data-testid="rooms-available"]').length) {
+
+                // if display not ready, exit to wait....
+                if ($('div[data-testid="room-tile"]').length) {
+                    return;
+                }
+
                 curHash = window.location.hash;
 
                 // reorder price rates to have 30% first
