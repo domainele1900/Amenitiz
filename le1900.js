@@ -107,16 +107,20 @@ trackVirtualPage = function () {
   var page = stepMap[hash];
 
   if(page){
-    gtag('event', 'page_view', {
-      page_title: page,
+    var from = new URLSearchParams(window.location.search).get('start_date');
+    var to   = new URLSearchParams(window.location.search).get('end_date');
+    var ad   = new URLSearchParams(window.location.search).get('adults');
+    var ch   = new URLSearchParams(window.location.search).get('children');
+    gtagClient('event', 'page_view', {
+      page_title: page + (window.location.search ? " du "+from+" au "+to+", "+ad+" adultes"+" ch enfants" : ""),
       page_location: window.location.origin + "/" + page + window.location.search,
-      start_date: new URLSearchParams(window.location.search).get('start_date'),
-      end_date: new URLSearchParams(window.location.search).get('end_date'),
-      adults: new URLSearchParams(window.location.search).get('adults'),
-      children: new URLSearchParams(window.location.search).get('children')
+      start_date: from,
+      end_date: to,
+      adults: ad,
+      children: ch
     });
 
-    console.log("GA4 virtual page:", page + window.location.search);
+    // console.log("GA4 virtual page:", page + window.location.search);
   }
 }
 
