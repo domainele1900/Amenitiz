@@ -112,7 +112,7 @@ trackVirtualPage = function () {
     var ad   = new URLSearchParams(window.location.search).get('adults');
     var ch   = new URLSearchParams(window.location.search).get('children');
     gtagClient('event', 'page_view', {
-      page_title: page + (window.location.search ? " du "+from+" au "+to+", "+ad+" adultes"+" ch enfants" : ""),
+      page_title: page + (window.location.search ? " du "+from+" au "+to+", "+ad+" adultes "+ch+" enfants" : ""),
       page_location: window.location.origin + "/" + page + window.location.search,
       start_date: from,
       end_date: to,
